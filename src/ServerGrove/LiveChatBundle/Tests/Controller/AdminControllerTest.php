@@ -282,6 +282,8 @@ class AdminControllerTest extends ControllerTest
 
     public function testEditOperatorDepartment()
     {
+        $this->markTestSkipped();
+
         $this->login();
 
         /* @var $dm Doctrine\ODM\MongoDB\DocumentManager */
