@@ -1,6 +1,14 @@
 class repository {
 
-  package { 'curl': ensure => installed }
+  exec {'apt-get-update-pre':
+    command => 'apt-get update',
+    path    => '/usr/bin'
+  }
+
+  package {['python-software-properties', 'git', 'curl']:
+    ensure  => installed,
+    require => Exec['apt-get-update-pre']
+  }
 
   exec { 'import-key':
     path    => ['/bin', '/usr/bin'],
@@ -9,26 +17,28 @@ class repository {
     require => Package['curl']
   }
 
-  file { 'servergrove.repo':
+  file {'servergrove.repo':
     path    => '/etc/apt/sources.list.d/servergrove.list',
     ensure  => present,
     content => 'deb http://repos.servergrove.com/servergrove-ubuntu-precise precise main',
     require => Exec['import-key']
   }
 
-  exec { 'apt-get-update':
+  exec {'nodejs-ppa':
+    path    => '/usr/bin',
+    command => 'add-apt-repository ppa:chris-lea/node.js',
+    require => Package['python-software-properties']
+  }
+
+  exec {'apt-get-update-pos':
     command => 'apt-get update',
-    path    => ['/bin', '/usr/bin'],
-    require => File['servergrove.repo']
+    path    => '/usr/bin',
+    require => [File['servergrove.repo'], Exec['nodejs-ppa']]
   }
 }
 
-stage { pre: before => Stage[main] }
-
-
-class { 'repository':
-  stage => pre
-}
+stage {pre: before => Stage[main]}
+class {'repository': stage => pre}
 
 
 class apache {
@@ -43,9 +53,14 @@ class apache {
     require => Package['apache2']
   }
 
+  file {'/etc/apache2/sites-available/default':
+      source  => '/vagrant/puppet/files/site.conf',
+      require => Package['apache2']
+    }
+
   service { 'apache2':
     ensure  => running,
-    require => Exec['apache2-rewrite']
+    require => [Exec['apache2-rewrite'], File['/etc/apache2/sites-available/default']]
   }
 }
 
@@ -74,44 +89,27 @@ class php {
 include php
 
 
-class webserver {
-  file { '/etc/apache2/sites-available/default':
-    source  => '/vagrant/puppet/files/site.conf',
-    notify  => Service['apache2'],
-    require => Package['apache2']
+class nodejs {
+
+  exec {'nodejs':
+    path    => ['/usr/bin', '/bin', '/sbin'],
+    command => 'apt-get install nodejs -y --force-yes',
+    creates => '/usr/bin/nodejs'
+  }
+
+  exec {'uglifycss':
+    path    => '/usr/bin',
+    command => 'npm install -g uglifycss',
+    require => Exec['nodejs'],
+    creates => '/usr/bin/uglifycss'
+  }
+
+  exec {'uglifyjs':
+    path    => '/usr/bin',
+    command => 'npm install -g uglify-js',
+    require => Exec['nodejs'],
+    creates => '/usr/bin/uglifyjs'
   }
 }
 
-include webserver
-
-
-class git {
-  package { 'git':
-    ensure => installed
-  }
-}
-
-include git
-
-
-class servergrovelivechat {
-
-  exec { 'composer-install':
-    path    => ['/usr/bin', '/usr/local/php55/bin'],
-    command => 'curl -sS https://getcomposer.org/installer | php',
-    cwd     => '/vagrant',
-    creates => '/vagrant/composer.phar',
-    require => [Package['php55'], Package['curl']]
-  }
-
-  exec { 'composer-dependencies':
-    path    => '/usr/local/php55/bin',
-    command => 'php composer.phar install --dev',
-    cwd     => '/vagrant',
-    creates => '/vagrant/vendor',
-    require => [Package['git'], Exec['composer-install']],
-    timeout => 3600
-  }
-}
-
-include servergrovelivechat
+include nodejs
