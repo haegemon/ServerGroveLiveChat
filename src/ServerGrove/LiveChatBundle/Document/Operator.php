@@ -16,8 +16,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  * repositoryClass="ServerGrove\LiveChatBundle\Document\OperatorRepository"
  * )
  * @MongoDB\InheritanceType("SINGLE_COLLECTION")
- * @MongoDB\DiscriminatorField(fieldName="type")
- * @MongoDB\DiscriminatorMap({"admin"="Administrator", "operator"="Operator"})
  */
 class Operator extends User implements UserInterface
 {
@@ -33,6 +31,12 @@ class Operator extends User implements UserInterface
      * @MongoDB\Field(type="boolean")
      */
     private $isActive = true;
+
+    /**
+     * @var array
+     * @MongoDB\Collection()
+     */
+    private $roles;
 
     /**
      * @var string
@@ -56,9 +60,10 @@ class Operator extends User implements UserInterface
 
     public function __construct()
     {
-        $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
-        $this->departments = new ArrayCollection();
-        $this->ratings = new ArrayCollection();
+        $this->salt             = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        $this->departments      = new ArrayCollection();
+        $this->ratings          = new ArrayCollection();
+        $this->roles            = array('ROLE_OPERATOR');
     }
 
     public function addRating(Operator\Rating $rating)
@@ -143,6 +148,16 @@ class Operator extends User implements UserInterface
         $this->departments = $departments;
     }
 
+    public function isAdministrator()
+    {
+        return in_array('ROLE_ADMIN', $this->roles);
+    }
+
+    public function promote()
+    {
+        $this->roles = array('ROLE_ADMIN', 'ROLE_USER');
+    }
+
     public function getKind()
     {
         return 'Operator';
@@ -192,7 +207,7 @@ class Operator extends User implements UserInterface
      */
     public function getRoles()
     {
-        return array('ROLE_OPERATOR');
+        return $this->roles;
     }
 
     public function getSalt()

@@ -214,7 +214,6 @@ class ChatController extends PublicController
 
         return $this->render('ServerGroveLiveChatBundle:Chat:index.html.twig', array(
             'visitor' => $visitor,
-            'errorMsg' => $this->getSessionStorage()->getFlash('errorMsg', null),
             'form' => $form->createView()
         ), $response);
     }

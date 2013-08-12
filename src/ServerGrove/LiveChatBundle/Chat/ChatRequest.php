@@ -14,8 +14,7 @@ class ChatRequest
 
     /**
      * @var string
-     * @Assert\MaxLength(150)
-     * @Assert\MinLength(6)
+     * @Assert\Length(min=6, max=150)
      * @Assert\NotBlank
      */
     private $name;

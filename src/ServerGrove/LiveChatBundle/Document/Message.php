@@ -26,7 +26,7 @@ class Message
      *     discriminatorMap={
      *         "operator"="Operator",
      *         "visitor"="Visitor",
-     *         "admin"="Administrator"
+     *         "admin"="Operator"
      *     }
      * )
      */

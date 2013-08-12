@@ -4,6 +4,11 @@
 
 {% block content %}
 
+
+        <div class="alert alert-error">
+            {{ error }}
+        </div>
+
 <form action="{{ path('_security_check') }}" method="post" class="form-horizontal">
 
     <legend>Please, log in</legend>

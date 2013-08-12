@@ -1,3 +1,6 @@
+_security_check:
+    pattern: /sglivechat/admin/login-check
+
 sglivechat:
   resource: "@ServerGroveLiveChatBundle/Resources/config/routing.yml"
   prefix: /sglivechat

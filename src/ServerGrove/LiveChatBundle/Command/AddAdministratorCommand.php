@@ -2,7 +2,7 @@
 
 namespace ServerGrove\LiveChatBundle\Command;
 
-use ServerGrove\LiveChatBundle\Document\Administrator;
+use ServerGrove\LiveChatBundle\Document\Operator;
 
 /**
  * @author Ismael Ambrosi<ismael@servergrove.com>
@@ -22,6 +22,9 @@ class AddAdministratorCommand extends AddOperatorCommand
 
     public function createOperator()
     {
-        return new Administrator();
+        $operator = new Operator();
+        $operator->promote();
+
+        return $operator;
     }
 }

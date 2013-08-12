@@ -38,7 +38,15 @@ class AddOperatorCommand extends BaseCommand
 
             $operator->setName($input->getArgument('name'));
             $operator->setEmail($input->getArgument('email'));
-            $operator->setPasswd($input->getArgument('password'));
+
+            $factory  = $this->getContainer()->get('security.encoder_factory');
+            $encoder  = $factory->getEncoder($operator);
+            $password = $encoder->encodePassword(
+                $input->getArgument('password'),
+                $operator->getSalt()
+            );
+
+            $operator->setPasswd($password);
 
             $this->getDocumentManager()->persist($operator);
             $this->getDocumentManager()->flush();

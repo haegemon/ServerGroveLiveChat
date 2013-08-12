@@ -24,11 +24,6 @@ class OperatorLoginType extends AbstractType
         ));
     }
 
-    public function getDefaultOptions(array $options)
-    {
-        return array('data_class' => 'ServerGrove\\LiveChatBundle\\Admin\\OperatorLogin');
-    }
-
     /**
      * Returns the name of this type.
      *

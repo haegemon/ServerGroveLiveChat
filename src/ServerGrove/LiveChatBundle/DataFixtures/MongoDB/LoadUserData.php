@@ -44,7 +44,9 @@ class LoadUserData implements FixtureInterface
 
     private function createAdministrator(ObjectManager $manager, $name, $email, $passwd, OperatorDepartment $department)
     {
-        return $this->saveUser($manager, new Administrator(), $name, $email, $passwd, $department);
+        $operator = new Operator();
+        $operator->promote();
+        return $this->saveUser($manager, $operator, $name, $email, $passwd, $department);
     }
 
     private function saveUser(ObjectManager $manager, Operator $operator, $name, $email, $passwd, OperatorDepartment $department)
