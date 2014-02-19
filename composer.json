@@ -15,11 +15,12 @@
         "sensio/generator-bundle":              "2.3.*",
         "kriswallsmith/assetic":                "1.1.*",
         "friendsofsymfony/jsrouting-bundle":    "1.2.*",
+        "friendsofsymfony/user-bundle": "~2.0@dev",
         "jms/security-extra-bundle":            "1.5.*",
         "jms/di-extra-bundle":                  "1.4.*",
         "incenteev/composer-parameter-handler": "2.0.*",
-        "doctrine/mongodb-odm":                 "1.0.*@dev",
-        "doctrine/mongodb-odm-bundle":          "3.0.*@dev"
+        "doctrine/orm":                         ">=2.2.3,<2.4-dev",
+        "doctrine/doctrine-bundle":             "1.2.*"
     },
 
     "require-dev": {

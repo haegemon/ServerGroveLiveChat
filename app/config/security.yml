@@ -1,6 +1,6 @@
 security:
     encoders:
-        ServerGrove\LiveChatBundle\Document\Operator: sha512
+        FOS\UserBundle\Model\UserInterface: sha512
 
     role_hierarchy:
         ROLE_OPERATOR:    ROLE_USER
@@ -9,7 +9,7 @@ security:
 
     providers:
         default_provider:
-            mongodb: { class: ServerGrove\LiveChatBundle\Document\Operator, property: email }
+            id: fos_user.user_provider.username_email
 
     firewalls:
         dev:
